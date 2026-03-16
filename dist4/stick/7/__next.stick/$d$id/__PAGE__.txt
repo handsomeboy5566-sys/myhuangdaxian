@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[56988,["/_next/static/chunks/c53fbebea31aee4c.js","/_next/static/chunks/4dfea433f91efce0.js","/_next/static/chunks/678afa07ec51619d.js"],"default"]
+3:I[97367,["/_next/static/chunks/2f236954d6a65e12.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"3BvLOhVCELDZe9Yc8B0_x","rsc":["$","$1","c",{"children":[["$","$L2",null,{"initialStick":{"id":7,"level":"中吉签","title":"仁贵归家","poem":"秋尽冬初景萧条，人生至此心寂寥；惟有残红无改色，依然开向旧时桥","meaning":"荣归故里，衣锦还乡，物是人非","advice":"不忘初心，方得始终","story":"薛仁贵征战多年后归家，与妻儿团聚，功成名就衣锦还乡。"}}],[["$","script","script-0",{"src":"/_next/static/chunks/c53fbebea31aee4c.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/4dfea433f91efce0.js","async":true}],["$","script","script-2",{"src":"/_next/static/chunks/678afa07ec51619d.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

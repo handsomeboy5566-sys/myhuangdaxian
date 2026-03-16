@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[56988,["/_next/static/chunks/c53fbebea31aee4c.js","/_next/static/chunks/4dfea433f91efce0.js","/_next/static/chunks/678afa07ec51619d.js"],"default"]
+3:I[97367,["/_next/static/chunks/2f236954d6a65e12.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"3BvLOhVCELDZe9Yc8B0_x","rsc":["$","$1","c",{"children":[["$","$L2",null,{"initialStick":{"id":16,"level":"中吉签","title":"皇叔遇水镜（刘备访贤）","poem":"几年静坐守寒毡，今日方欣遇大贤；水镜先生识俊杰，卧龙从此出隆田","meaning":"得遇明师，指点迷津，卧龙凤雏","advice":"虚心求教，知人善任","story":"皇叔遇水镜（刘备访贤）的典故故事，象征着人生的某种境遇和道理。"}}],[["$","script","script-0",{"src":"/_next/static/chunks/c53fbebea31aee4c.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/4dfea433f91efce0.js","async":true}],["$","script","script-2",{"src":"/_next/static/chunks/678afa07ec51619d.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

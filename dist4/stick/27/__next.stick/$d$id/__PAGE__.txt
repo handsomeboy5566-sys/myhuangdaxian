@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[56988,["/_next/static/chunks/c53fbebea31aee4c.js","/_next/static/chunks/4dfea433f91efce0.js","/_next/static/chunks/678afa07ec51619d.js"],"default"]
+3:I[97367,["/_next/static/chunks/2f236954d6a65e12.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"3BvLOhVCELDZe9Yc8B0_x","rsc":["$","$1","c",{"children":[["$","$L2",null,{"initialStick":{"id":27,"level":"中平签","title":"越王复国","poem":"卧薪尝胆志愈坚，十年生聚十年教训；越王勾践终雪耻，三千越甲可吞吴","meaning":"卧薪尝胆，终雪前耻，复国雪耻","advice":"忍辱负重，发愤图强","story":"越王勾践卧薪尝胆，十年生聚，终灭吴国雪耻。"}}],[["$","script","script-0",{"src":"/_next/static/chunks/c53fbebea31aee4c.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/4dfea433f91efce0.js","async":true}],["$","script","script-2",{"src":"/_next/static/chunks/678afa07ec51619d.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

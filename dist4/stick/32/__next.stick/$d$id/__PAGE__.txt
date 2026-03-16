@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[56988,["/_next/static/chunks/c53fbebea31aee4c.js","/_next/static/chunks/4dfea433f91efce0.js","/_next/static/chunks/678afa07ec51619d.js"],"default"]
+3:I[97367,["/_next/static/chunks/2f236954d6a65e12.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"3BvLOhVCELDZe9Yc8B0_x","rsc":["$","$1","c",{"children":[["$","$L2",null,{"initialStick":{"id":32,"level":"中平签","title":"苏武牧羊","poem":"苏武牧羊北海滨，节旄尽落志不伸；牧羊十九年不改，持节不屈汉忠臣","meaning":"持节不屈，守志待时，忠贞不渝","advice":"坚守节操，终得回归","story":"苏武持节牧羊十九年，节旄尽落，忠心不改。"}}],[["$","script","script-0",{"src":"/_next/static/chunks/c53fbebea31aee4c.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/4dfea433f91efce0.js","async":true}],["$","script","script-2",{"src":"/_next/static/chunks/678afa07ec51619d.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

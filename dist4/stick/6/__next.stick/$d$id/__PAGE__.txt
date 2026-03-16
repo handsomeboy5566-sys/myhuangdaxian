@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[56988,["/_next/static/chunks/c53fbebea31aee4c.js","/_next/static/chunks/4dfea433f91efce0.js","/_next/static/chunks/678afa07ec51619d.js"],"default"]
+3:I[97367,["/_next/static/chunks/2f236954d6a65e12.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"3BvLOhVCELDZe9Yc8B0_x","rsc":["$","$1","c",{"children":[["$","$L2",null,{"initialStick":{"id":6,"level":"上吉签","title":"王羲之归故里","poem":"本是英雄骨格高，遭逢时日渐坚牢；虽然未得风云会，且向深山作俊豪","meaning":"功成名就，衣锦还乡，英雄本色","advice":"坚守本心，终得圆满","story":"王羲之辞官归隐，回到故乡会稽，专心书法，终成书圣。"}}],[["$","script","script-0",{"src":"/_next/static/chunks/c53fbebea31aee4c.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/4dfea433f91efce0.js","async":true}],["$","script","script-2",{"src":"/_next/static/chunks/678afa07ec51619d.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null
