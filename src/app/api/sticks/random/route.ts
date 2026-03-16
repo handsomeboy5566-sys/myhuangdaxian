@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { initDatabase, seedDatabase, getRandomStick } from '@/lib/db';
+import { seedDatabase, getRandomStick } from '@/lib/db';
 import sticksData from '../../../../../data/sticks.json';
 
 // 初始化数据库
