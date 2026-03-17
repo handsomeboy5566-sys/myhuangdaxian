@@ -47,7 +47,6 @@ export async function getRandomStick(): Promise<FortuneStick> {
     where: { id: randomId },
   });
   if (!stick) {
-    // 如果该ID不存在，递归重试
     return getRandomStick();
   }
   return formatStick(stick);

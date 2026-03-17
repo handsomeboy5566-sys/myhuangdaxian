@@ -7,8 +7,8 @@ import { FortuneStick } from '@/types/stick';
 
 const ADMIN_PASSWORD = 'admin123';
 
-// Easing
-const easeOutQuart = [0.25, 1, 0.5, 1];
+// Easing - typed as tuple for Framer Motion
+const easeOutQuart: [number, number, number, number] = [0.25, 1, 0.5, 1];
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

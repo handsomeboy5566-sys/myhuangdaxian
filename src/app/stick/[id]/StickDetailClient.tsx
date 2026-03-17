@@ -7,8 +7,8 @@ import { ArrowLeft, Download, Share2, Loader2 } from 'lucide-react';
 import { FortuneStick } from '@/types/stick';
 import html2canvas from 'html2canvas';
 
-// Easing curves
-const easeOutQuart = [0.25, 1, 0.5, 1];
+// Easing curves - typed as tuple for Framer Motion
+const easeOutQuart: [number, number, number, number] = [0.25, 1, 0.5, 1];
 
 // Animation variants
 const pageVariants: Variants = {
