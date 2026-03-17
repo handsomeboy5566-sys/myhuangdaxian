@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Edit, Search, Lock, Unlock, Loader2, Plus, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Edit, Search, Lock, Unlock, Loader2, Plus, Trash2, X } from 'lucide-react';
 import { FortuneStick } from '@/types/stick';
 
 const ADMIN_PASSWORD = 'admin123';
+
+// Easing
+const easeOutQuart = [0.25, 1, 0.5, 1];
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -18,7 +21,6 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  // 从API加载签文数据
   useEffect(() => {
     if (isAuthenticated) {
       loadSticks();
@@ -32,8 +34,6 @@ export default function AdminPage() {
       const data = await response.json();
       if (data.success) {
         setSticks(data.data);
-      } else {
-        alert('加载签文失败: ' + data.error);
       }
     } catch (error) {
       console.error('加载签文失败:', error);
@@ -58,9 +58,7 @@ export default function AdminPage() {
     try {
       const response = await fetch(`/api/sticks/${editingStick.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           level: editingStick.level,
           title: editingStick.title,
@@ -74,15 +72,14 @@ export default function AdminPage() {
       const data = await response.json();
 
       if (data.success) {
-        // 更新本地列表
         setSticks(sticks.map(s => s.id === editingStick.id ? data.data : s));
         setEditingStick(null);
-        alert('签文已保存到数据库！');
+        alert('签文已保存！');
       } else {
         alert('保存失败: ' + data.error);
       }
     } catch (error) {
-      console.error('保存签文失败:', error);
+      console.error('保存失败:', error);
       alert('保存失败');
     } finally {
       setSaving(false);
@@ -96,9 +93,7 @@ export default function AdminPage() {
     try {
       const response = await fetch('/api/sticks', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: editingStick.id,
           level: editingStick.level,
@@ -113,7 +108,6 @@ export default function AdminPage() {
       const data = await response.json();
 
       if (data.success) {
-        // 添加到本地列表
         setSticks([...sticks, data.data].sort((a, b) => a.id - b.id));
         setEditingStick(null);
         setIsCreating(false);
@@ -122,7 +116,7 @@ export default function AdminPage() {
         alert('创建失败: ' + data.error);
       }
     } catch (error) {
-      console.error('创建签文失败:', error);
+      console.error('创建失败:', error);
       alert('创建失败');
     } finally {
       setSaving(false);
@@ -134,21 +128,17 @@ export default function AdminPage() {
 
     setDeletingId(id);
     try {
-      const response = await fetch(`/api/sticks/${id}`, {
-        method: 'DELETE',
-      });
-
+      const response = await fetch(`/api/sticks/${id}`, { method: 'DELETE' });
       const data = await response.json();
 
       if (data.success) {
-        // 从本地列表移除
         setSticks(sticks.filter(s => s.id !== id));
         alert('签文已删除！');
       } else {
         alert('删除失败: ' + data.error);
       }
     } catch (error) {
-      console.error('删除签文失败:', error);
+      console.error('删除失败:', error);
       alert('删除失败');
     } finally {
       setDeletingId(null);
@@ -156,7 +146,6 @@ export default function AdminPage() {
   };
 
   const openCreateModal = () => {
-    // 找到下一个可用的ID
     const maxId = sticks.length > 0 ? Math.max(...sticks.map(s => s.id)) : 0;
     setEditingStick({
       id: maxId + 1,
@@ -176,20 +165,28 @@ export default function AdminPage() {
     stick.id.toString() === searchTerm
   );
 
+  const getLevelColor = (level: string) => {
+    if (level.includes('上')) return 'bg-red-100 text-red-700 border-red-200';
+    if (level.includes('中')) return 'bg-amber-100 text-amber-700 border-amber-200';
+    return 'bg-gray-100 text-gray-700 border-gray-200';
+  };
+
+  // Login screen
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full"
+          transition={{ duration: 0.5, ease: easeOutQuart }}
+          className="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full border border-amber-100"
         >
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-8 h-8 text-amber-600" />
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
+              <Lock className="w-10 h-10 text-amber-600" />
             </div>
-            <h1 className="text-xl font-bold text-gray-800">管理后台登录</h1>
-            <p className="text-sm text-gray-500 mt-1">请输入密码继续</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">管理后台登录</h1>
+            <p className="text-sm text-gray-500">请输入密码继续</p>
           </div>
 
           <input
@@ -197,13 +194,20 @@ export default function AdminPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="请输入密码"
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 mb-4"
+            className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl
+                     focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500
+                     transition-all duration-200 mb-4"
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
           />
 
           <button
             onClick={handleLogin}
-            className="w-full py-3 bg-amber-600 text-white rounded-lg font-medium hover:bg-amber-700 transition-colors"
+            className="w-full py-3.5 bg-gradient-to-r from-amber-600 to-amber-700
+                     text-white rounded-xl font-semibold
+                     hover:from-amber-700 hover:to-amber-800
+                     active:scale-[0.98]
+                     transition-all duration-200
+                     shadow-lg shadow-amber-600/25"
           >
             登录
           </button>
@@ -214,243 +218,308 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/25">
               <Unlock className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-gray-800">签文管理后台</h1>
-              <p className="text-xs text-gray-500">共 {sticks.length} 支签 (数据库存储)</p>
+              <h1 className="font-bold text-gray-900 text-lg">签文管理后台</h1>
+              <p className="text-xs text-gray-500">共 {sticks.length} 支签</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={loadSticks}
-              className="text-sm text-amber-600 hover:text-amber-700"
               disabled={loading}
+              className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm text-amber-600
+                       hover:bg-amber-50 rounded-lg transition-colors"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : '刷新数据'}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : '刷新'}
             </button>
             <button
               onClick={() => setIsAuthenticated(false)}
-              className="text-sm text-gray-500 hover:text-gray-700"
+              className="text-sm text-gray-500 hover:text-gray-700 px-3 py-2"
             >
-              退出登录
+              退出
             </button>
             <button
               onClick={openCreateModal}
-              className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-amber-600 text-white
+                       rounded-xl font-medium hover:bg-amber-700
+                       active:scale-[0.98] transition-all duration-200
+                       shadow-lg shadow-amber-600/25"
             >
               <Plus className="w-4 h-4" />
-              新增签文
+              <span className="hidden sm:inline">新增签文</span>
+              <span className="sm:hidden">新增</span>
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
+      {/* Main content */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        {/* Search */}
         <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
             placeholder="搜索签号、标题或签诗..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl
+                     focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500
+                     transition-all duration-200 shadow-sm"
           />
         </div>
 
+        {/* List */}
         {loading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
           </div>
         ) : (
-          <div className="grid gap-4">
-            {filteredSticks.map((stick) => (
+          <div className="grid gap-3">
+            <AnimatePresence mode="popLayout">
+              {filteredSticks.map((stick, index) => (
+                <motion.div
+                  key={stick.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ delay: index * 0.03, duration: 0.3, ease: easeOutQuart }}
+                  className="bg-white rounded-xl p-4 sm:p-5 border border-gray-200
+                           hover:shadow-md hover:border-amber-200
+                           transition-all duration-200 group"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <span className="text-lg font-bold text-gray-900">
+                          第 {stick.id} 签
+                        </span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getLevelColor(stick.level)}`}>
+                          {stick.level}
+                        </span>
+                        <span className="text-gray-700 font-medium truncate">{stick.title}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">{stick.poem}</p>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => setEditingStick(stick)}
+                        className="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50
+                                 rounded-lg transition-colors"
+                        title="编辑"
+                      >
+                        <Edit className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(stick.id)}
+                        disabled={deletingId === stick.id}
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50
+                                 rounded-lg transition-colors disabled:opacity-50"
+                        title="删除"
+                      >
+                        {deletingId === stick.id ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            {filteredSticks.length === 0 && !loading && (
               <motion.div
-                key={stick.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow"
+                className="text-center py-16 text-gray-500 bg-white rounded-xl border border-gray-200"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg font-bold text-gray-800">
-                        第 {stick.id} 签
-                      </span>
-                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                        stick.level.includes('上') ? 'bg-red-100 text-red-600' :
-                        stick.level.includes('中') ? 'bg-amber-100 text-amber-600' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        {stick.level}
-                      </span>
-                      <span className="text-gray-600 font-medium">{stick.title}</span>
-                    </div>
-                    <p className="text-sm text-gray-600 line-clamp-2">{stick.poem}</p>
-                  </div>
-
-                  <div className="flex items-center gap-1 ml-4">
-                    <button
-                      onClick={() => setEditingStick(stick)}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                    >
-                      <Edit className="w-5 h-5 text-gray-500" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(stick.id)}
-                      disabled={deletingId === stick.id}
-                      className="p-2 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      {deletingId === stick.id ? (
-                        <Loader2 className="w-5 h-5 text-red-500 animate-spin" />
-                      ) : (
-                        <Trash2 className="w-5 h-5 text-red-500" />
-                      )}
-                    </button>
-                  </div>
-                </div>
+                <p>没有找到匹配的签文</p>
               </motion.div>
-            ))}
-          </div>
-        )}
-
-        {filteredSticks.length === 0 && !loading && (
-          <div className="text-center py-12 text-gray-500">
-            没有找到匹配的签文
+            )}
           </div>
         )}
       </main>
 
-      {editingStick && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      {/* Modal */}
+      <AnimatePresence>
+        {editingStick && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setEditingStick(null);
+                setIsCreating(false);
+              }
+            }}
           >
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold">
-                {isCreating ? '新增签文' : `编辑第 ${editingStick.id} 签`}
-              </h2>
-              <button
-                onClick={() => {
-                  setEditingStick(null);
-                  setIsCreating(false);
-                }}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, ease: easeOutQuart }}
+              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+            >
+              {/* Modal header */}
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <h2 className="text-lg font-bold text-gray-900">
+                  {isCreating ? '新增签文' : `编辑第 ${editingStick.id} 签`}
+                </h2>
+                <button
+                  onClick={() => {
+                    setEditingStick(null);
+                    setIsCreating(false);
+                  }}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-            <div className="p-6 space-y-4">
-              {isCreating && (
+              {/* Modal body */}
+              <div className="p-6 overflow-y-auto max-h-[60vh] space-y-5">
+                {isCreating && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">签号</label>
+                    <input
+                      type="number"
+                      value={editingStick.id}
+                      onChange={(e) => setEditingStick({ ...editingStick, id: parseInt(e.target.value) || 0 })}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500
+                               transition-all"
+                      min={1}
+                    />
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">吉凶等级</label>
+                    <select
+                      value={editingStick.level}
+                      onChange={(e) => setEditingStick({ ...editingStick, level: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500
+                               transition-all"
+                    >
+                      <option value="上上签">上上签</option>
+                      <option value="上吉签">上吉签</option>
+                      <option value="中吉签">中吉签</option>
+                      <option value="中平签">中平签</option>
+                      <option value="下下签">下下签</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">典故标题</label>
+                    <input
+                      type="text"
+                      value={editingStick.title}
+                      onChange={(e) => setEditingStick({ ...editingStick, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500
+                               transition-all"
+                      placeholder="如：钟离成道"
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">签号</label>
-                  <input
-                    type="number"
-                    value={editingStick.id}
-                    onChange={(e) => setEditingStick({ ...editingStick, id: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    min={1}
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">签诗</label>
+                  <textarea
+                    value={editingStick.poem}
+                    onChange={(e) => setEditingStick({ ...editingStick, poem: e.target.value })}
+                    rows={4}
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                             focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500
+                             transition-all resize-none"
+                    placeholder="输入四句签诗..."
                   />
                 </div>
-              )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">吉凶等级</label>
-                <select
-                  value={editingStick.level}
-                  onChange={(e) => setEditingStick({ ...editingStick, level: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">寓意概要</label>
+                    <textarea
+                      value={editingStick.meaning}
+                      onChange={(e) => setEditingStick({ ...editingStick, meaning: e.target.value })}
+                      rows={3}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500
+                               transition-all resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">建议</label>
+                    <textarea
+                      value={editingStick.advice}
+                      onChange={(e) => setEditingStick({ ...editingStick, advice: e.target.value })}
+                      rows={3}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500
+                               transition-all resize-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">典故详解</label>
+                  <textarea
+                    value={editingStick.story}
+                    onChange={(e) => setEditingStick({ ...editingStick, story: e.target.value })}
+                    rows={4}
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                             focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500
+                             transition-all resize-none"
+                    placeholder="输入典故故事..."
+                  />
+                </div>
+              </div>
+
+              {/* Modal footer */}
+              <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setEditingStick(null);
+                    setIsCreating(false);
+                  }}
+                  disabled={saving}
+                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl
+                           transition-colors disabled:opacity-50"
                 >
-                  <option value="上上签">上上签</option>
-                  <option value="上吉签">上吉签</option>
-                  <option value="中吉签">中吉签</option>
-                  <option value="中平签">中平签</option>
-                  <option value="下下签">下下签</option>
-                </select>
+                  取消
+                </button>
+                <button
+                  onClick={isCreating ? handleCreate : handleSave}
+                  disabled={saving}
+                  className="px-5 py-2.5 bg-amber-600 text-white rounded-xl font-medium
+                           hover:bg-amber-700 active:scale-[0.98]
+                           transition-all duration-200
+                           disabled:opacity-50 flex items-center gap-2"
+                >
+                  {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {saving ? (isCreating ? '创建中...' : '保存中...') : (isCreating ? '创建签文' : '保存到数据库')}
+                </button>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">典故标题</label>
-                <input
-                  type="text"
-                  value={editingStick.title}
-                  onChange={(e) => setEditingStick({ ...editingStick, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">签诗</label>
-                <textarea
-                  value={editingStick.poem}
-                  onChange={(e) => setEditingStick({ ...editingStick, poem: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">寓意概要</label>
-                <textarea
-                  value={editingStick.meaning}
-                  onChange={(e) => setEditingStick({ ...editingStick, meaning: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">建议</label>
-                <textarea
-                  value={editingStick.advice}
-                  onChange={(e) => setEditingStick({ ...editingStick, advice: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">典故详解</label>
-                <textarea
-                  value={editingStick.story}
-                  onChange={(e) => setEditingStick({ ...editingStick, story: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-            </div>
-
-            <div className="sticky bottom-0 bg-white border-t px-6 py-4 flex justify-end gap-3">
-              <button
-                onClick={() => {
-                  setEditingStick(null);
-                  setIsCreating(false);
-                }}
-                disabled={saving}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
-              >
-                取消
-              </button>
-              <button
-                onClick={isCreating ? handleCreate : handleSave}
-                disabled={saving}
-                className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 flex items-center gap-2"
-              >
-                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                {saving ? (isCreating ? '创建中...' : '保存中...') : (isCreating ? '创建签文' : '保存到数据库')}
-              </button>
-            </div>
+            </motion.div>
           </motion.div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }
